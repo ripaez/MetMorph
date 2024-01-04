@@ -1,5 +1,8 @@
 import os
 import pandas as pd 
+import numpy as np
+import itertools
+import collections
 from sklearn.model_selection import train_test_split
 
 def test():
@@ -57,3 +60,35 @@ def clean(input_df: pd.DataFrame, symbol=None, verbose:bool = False):
     if verbose:
         print('Cleaning done')
     return input_df, eliminated
+
+def labeling(input_df,label=None, eliminated=None):
+    """ It refines from the column label list those that were removed during the cleaning,
+    and updates the dataframe metadata
+    """
+    if len(eliminated) != 0:
+        label=list(itertools.compress(label,~eliminated))
+    if len(label) != 0 :
+        input_df.columns = label
+    return input_df
+
+def encoding_prep(dataframe: pd.DataFrame, cat_columns: list, num_columns: list, neglected_columns: list,verbose=False):
+    if len(neglected_columns) > 0:
+        for ii in neglected_columns:
+            if ii in cat_columns:
+                cat_columns.remove(ii)
+            elif ii in num_columns:
+                num_columns.remove(ii)
+            else:
+                raise TypeError(f"In function 'encoding_prep' the neglected column '{ii}' defined do not belong to the dataframe or it is repeated as neglected.")
+    total_labels = sorted([j for i in [cat_columns,num_columns,neglected_columns] for j in i])
+    original_labels = sorted(dataframe.columns.tolist())
+    if total_labels != original_labels:
+        if len(total_labels) > len(original_labels):
+            raise TypeError('Error: Possible double encoding categorization for columns in function EncodingPrep.')
+        elif len(total_labels) < len(original_labels):
+            raise TypeError('Error: Possible missing encoding categorization for columns in function EncodingPrep.')
+        else:
+            raise TypeError('Possible double/missing encoding caracterization happening. Check role of all columns.')
+    else: 
+        print('Encoding preparation done')   
+        return cat_columns,num_columns,neglected_columns

@@ -18,6 +18,7 @@ regresive=[regresive[x] for x in range(len(regresive)) if values_cbs[x]==1]
 cuartiles = [90,90,90,90]
 
 objs = system_preparation(Methods_to_use=Methods, regresive_method=regresive)
+exit()
 objs = bining_and_targets(objs)
 objs = feature_normalization(objs)
 objs = linkage_analyses(objs,cuartiles)

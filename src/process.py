@@ -62,6 +62,7 @@ def labeling_df(input_df,label=None, eliminated=None, indexing=None):
     if len(label) != 0 :
         input_df.columns = label
     if indexing:
+        print("A VER SI HACE ESTO O NO!!!!!!!!")
         try:
             input_df[indexing] = pd.to_datetime(input_df[indexing], infer_datetime_format=True)
         except:
